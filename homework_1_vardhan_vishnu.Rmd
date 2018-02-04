@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 My Github repository for my assignments can be found at this URL: https://github.com/vardhanv/compscix-415-2-assignments
 
+#### Load Data and Libraries
 ```{r load_packages, warning=FALSE, message=FALSE}
 library('mdsr')
 library('tidyverse')
@@ -22,15 +23,41 @@ data('WorldCities')
 glimpse(WorldCities)
 ```
 
-
+##### Find unique countries
 ```{r}
 WorldCities <- head(WorldCities,200)
 country_col <- WorldCities$country
 unique(country_col)
 ```
+### Answer 1
+There are 200 observations, and 10 variables (or columns) in this data set. 
 
+This data set explores the demographic profile of multiple cities in the world. Including the name of the city, its geographical location, the country and region it belongs to, its population, common codes (country, region), population, and the date (for the population data)
 
+### Answer 2
+
+##### Find unique regions
 ```{r}
 unique(WorldCities$region)
 ```
+
+### Answer 3
+
+##### Unique countries using the pipe operator
+```{r}
+WorldCities %>% select(country) %>% unique()
+```
+
+```{r}
+WorldCities %>% ggplot(aes(x = population)) + geom_histogram( bins=40 
+                                                              ) + xlab('city population')
+```
+
+### Answer 4
+
+
+```{r}
+WorldCities %>% ggplot(aes(x = population)) + geom_histogram( bins = 100) + xlab('City Population') + ylab('Count of Cities') + ggtitle('Population Histogram', subtitle = 'A historgram of the WorldCities Database') + theme_bw()
+```
+
 
