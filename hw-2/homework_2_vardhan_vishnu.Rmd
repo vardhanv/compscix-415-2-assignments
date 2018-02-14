@@ -1,8 +1,9 @@
 ---
 title: "homework_2_vardhan_vishnu"
 output:
+  pdf_document: default
   html_document:
-    self_contained: true
+    self_contained: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -558,8 +559,16 @@ designer’s choices. What works? What doesn’t work? What would you have done 
 
 ##### Answer
 
-TBD
+Use of PI chart, though not ideal, seems to look good (though does not communicate the data it needs)
+Bar chart for "Best source of New Data Science Talent" is nice
+"Biggest obstacle to data science adoption" - Numbers are good
+"Data scientists are significantly more likely to advanced degrees" - Bar charts are bad
+"Data Scientists have more varied backgrounds" - Trying to use a chart for eye candy. Hard to understand
+"Characteristics of Data Scientsits" - Nice simple difference between Big Data Science, and Normal Data Science
+"Data scients are likely to be involved accross the data lifecycle" - multiple bar charts is confusing.
 
+
+ 
 
 
 
