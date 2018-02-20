@@ -1,0 +1,343 @@
+---
+title: "COMPSCIX 415.2 Homework 3"
+author: "Vishnu Vardhan"
+date: "2/18/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(nycflights13)
+library(ggthemes)
+```
+
+## Section 3.8.1
+
+
+### Q 3.8.1.1 
+What is the problem with this plot? How could you improve it?
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point()
+```
+
+
+#### Answer:
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_jitter(mapping = aes(color = class ), alpha = 0.3) +
+  facet_wrap(~ class) +
+  theme_bw()
+```
+
+
+### Q 3.8.1.2
+What parameters to geom_jitter() control the amount of jittering?
+
+#### Answer:
+
+Width & height
+
+As outlined in the help:
+
+Amount of vertical and horizontal jitter. The jitter is added in both positive and negative directions, so the total spread is twice the value specified here.
+If omitted, defaults to 40% of the resolution of the data: this means the jitter values will occupy 80% of the implied bins. Categorical data is aligned on the integers, so a width or height of 0.5 will spread the data so it's not possible to see the distinction between the categories.
+
+
+### Q 3.8.1.3
+Compare and contrast geom_jitter() with geom_count().
+
+#### Answer:
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_count(mapping = aes(color = class ), alpha = 0.3) +
+  facet_wrap(~ class) +
+  theme_bw()
+```
+
+
+### Q 3.8.1.4
+What’s the default position adjustment for geom_boxplot()? Create a visualisation of the mpg dataset that demonstrates it.
+
+#### Answer:
+
+The default position for a boxplot is "dodge". As you can see, the below two graphs are identical.
+ 
+```{r}
+ggplot(data = mpg, mapping = aes( x = manufacturer,y = hwy))  + 
+  geom_boxplot(mapping = aes(fill = class)) +
+  coord_flip() +
+  theme_bw()
+```
+
+```{r}
+ggplot(data = mpg, mapping = aes( x = manufacturer,y = hwy))  + 
+  geom_boxplot(mapping = aes(fill = class), position="dodge") +
+  coord_flip() +
+  theme_bw()
+```
+
+Changing position to identity results in the below.
+
+
+```{r}
+ggplot(data = mpg, mapping = aes( x = manufacturer,y = hwy)) + 
+  geom_boxplot(mapping = aes(fill = class), position="identity") +
+  coord_flip() + 
+  theme_bw()
+```
+
+
+
+
+
+## Section 3.9.1
+
+### Q 3.9.1.2
+What does labs() do? Read the documentation.
+
+#### Answer:
+
+labs() allows us to control the title, sub-title, labels for the x & y axis, footnotes via caption, and the label for the legend. Here are is a modified form of the examples from the documentation.
+
+```{r}
+ggplot(mtcars, aes(x=mpg,y=wt, color = cyl)) + 
+  geom_point() + 
+  labs(x = "Miles per gallon", y = "Weight (1000 lb)", color = "Cylinders") +
+  labs(caption = "\n From the 1974 Motor Trend US magazine for 32 automobiles \n (1973-1974 Models)")
+```
+
+
+### Q 3.9.1.4
+What does the plot below tell you about the relationship between city and highway mpg? Why is coord_fixed() important? What does geom_abline() do?
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() + 
+  geom_abline() +
+  coord_fixed()
+```
+
+
+#### Answer:
+
+As illustrated in the graph below, as city miles increase, higy miles increase propotionally, though highway miles increase faster between 15 & 20 city miles. 
+
+coord_fixed is important so that we are comparing similar things, and the slope shows the real world slope. geom_abline, plots a reference line that makes it easier to compare the data with a referece. 
+
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point()  + 
+  geom_smooth() +
+  geom_abline() +
+  coord_fixed()
+```
+
+
+## Section 4.4
+
+### Q 4.4.1
+Why does this code not work?
+
+my_variable <- 10
+my_varıable
+
+#### Answer:
+
+The variable is defined with 'i', but in the usage, the 'i' is replaced with the number 'l' (or something similar).
+
+### Q 4.4.2
+Tweak each of the following R commands so that they run correctly:
+
+ggplot(dota = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+fliter(mpg, cyl = 8)
+filter(diamond, carat > 3)
+
+
+#### Answer:
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8)
+filter(diamonds, carat > 3)
+```
+
+## Section 5.2.4
+
+### Q 5.2.4.1
+Find all flights that
+
+Had an arrival delay of two or more hours
+
+Flew to Houston (IAH or HOU)
+
+Were operated by United, American, or Delta
+
+Departed in summer (July, August, and September)
+
+Arrived more than two hours late, but didn’t leave late
+
+Were delayed by at least an hour, but made up over 30 minutes in flight
+
+Departed between midnight and 6am (inclusive)
+
+#### Answer:
+
+Had an arrival delay of two or more hours
+
+```{r}
+filter(flights,  arr_delay >= 120)
+```
+
+Flew to Houston (IAH or HOU)
+```{r}
+filter(flights, (dest == "IAH" | dest == "HOU"))
+```
+
+Were operated by United, American, or Delta
+
+```{r}
+filter(flights,  (carrier == "UA" | carrier == "AA" | carrier == "DL"))
+```
+
+Departed in summer (July, August, and September)
+
+```{r}
+filter(flights,  (month == 7 | month == 8 | month == 9))
+```
+Arrived more than two hours late, but didn’t leave late
+
+```{r}
+filter(flights,  (arr_delay > 120) & (dep_delay <= 0))
+```
+Were delayed by at least an hour, but made up over 30 minutes in flight
+
+```{r}
+filter(flights,  (arr_delay < (dep_delay-30)) & (dep_delay > 60))
+```
+
+Departed between midnight and 6am (inclusive)
+
+```{r}
+filter(flights,  (dep_time >= 0 & dep_time <= 600))
+```
+
+
+### Q 5.2.4.2
+Another useful dplyr filtering helper is between(). What does it do? Can you use it to simplify the code needed to answer the previous challenges?
+
+#### Answer:
+
+between() is a shortcut for x >= left & x <= right.
+
+```{r}
+filter(flights,  between(month,7,9))
+filter(flights,  between(dep_time, 0 , 600))
+```
+
+
+### Q 5.2.4.3
+How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
+
+#### Answer:
+
+8,255 flights have dep_time missing.  Other variables that are mising are: 
+arr_time, dep_delay, arr_delay, tailnum, air_time.
+
+tailnum - likely represents private flights, that don't have a tail num. air_time would be missing, if either dep_time or arr_time is missing, since it represents the amount of time in the air.
+
+
+
+```{r}
+filter(flights, is.na(dep_time))
+colSums(is.na(flights))
+```
+
+
+
+### Q 5.2.4.4
+Why is NA ^ 0 not missing? Why is NA | TRUE not missing? Why is FALSE & NA not missing? Can you figure out the general rule? (NA * 0 is a tricky counterexample!)
+
+#### Answer:
+
+NA ^ 0 is alwyas 1. So it makes sense to be valid. 
+NA | TRUE will always evaluate to true, irrespective of the NA value. So again makes sense
+FALSE & NA will always evaluate to false, irrespective of the NA value. Makes sense to not be missing.
+In general, if the answer is predictable - any evaluation with NA is not missing.
+
+## Section 5.4.1
+
+### Q 5.4.1.1
+Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+
+#### Answer:
+
+```{r}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+select(flights, starts_with("dep"), starts_with("arr"))
+```
+
+
+### Q 5.4.1.2
+What happens if you include the name of a variable multiple times in a select() call?
+
+#### Answer:
+
+select will only consider the first occurrence, and ignore other occurences. This is how the everything() call can be used to reorder the columns.
+
+```{r}
+select(flights, tailnum, tailnum)
+select(flights, tailnum, everything())
+```
+
+
+### Q 5.4.1.3
+What does the one_of() function do? Why might it be helpful in conjunction with this vector?
+
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+
+#### Answer:
+
+one_of has the signature one_of(..., vars=current_vars()).
+The first parameter (...) signifies one or more character arrays. 
+current_vars(), unless specified, evaluates to all the columns within the current select call.
+
+one_of looks at the character arrays, combines all the character arrays, and removes duplicates, and displays columns that are present in the 'vars' column list (by defaul all the columns). Errors (i.e garbage columns) are printed out as warnings.
+
+The key use seems to be described by this stackoverflow thread:
+https://stackoverflow.com/questions/45865892/why-is-one-of-called-that
+
+select(flights,garbage) will throw an error
+select(flights, one_of(c("garbage"))) will only warn. 
+
+This allows for UI driven development, without the developer having to check for the existence of the column, before executing a select.
+
+
+
+
+### Q 5.4.1.4
+Does the result of running the following code surprise you? How do the select helpers deal with case by default? How can you change that default?
+
+select(flights, contains("TIME"))
+
+#### Answer:
+
+Yes, it is quite surprising that 'select' is not case sensitive, though the help is clear that case is an input parameter, and the default is to ignore case. Executing this with 'ignore.case = FALSE', results in the expected output.
+
+
+```{r}
+select(flights, contains("TIME"))
+select(flights, contains("TIME", ignore.case = FALSE))
+```
+
+
+###Assignment complete
