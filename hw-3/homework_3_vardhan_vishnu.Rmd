@@ -52,6 +52,15 @@ Compare and contrast geom_jitter() with geom_count().
 
 #### Answer:
 
+Jitter and count are two ways in which we can try to capture overlapping variables. Jitter is good when many datapoints are close to each other, and a small displacement allows a good visual conclusion to be reached.
+
+geom_count on the other hand is more precise, but is harder to interpret if many of the points are too close together. geom_count tries to be more accurate, but communicates less when points are close to each other.
+
+To summarize - 
+geom_jitter: Good when many points overlap, but the distannce between these overlap points is also less. Is less accurate, but better at trends
+
+geom_count: good when many points overlap, but also the distance between the overlap points is more. Is more accurate
+
 ```{r}
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
   geom_count(mapping = aes(color = class ), alpha = 0.3) +
