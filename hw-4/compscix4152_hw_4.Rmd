@@ -52,11 +52,14 @@ d <- flights %>% group_by(year,month,day) %>%
     c_mean     = mean(is.na(dep_delay) | is.na(arr_delay)), 
     delay_mean = mean(dep_delay + arr_delay, na.rm = TRUE))
 
-ggplot(data = d) + geom_histogram(aes(delay_mean)) + labs(title = "Histogram of average Daily Delay", x = "Avg daily delay") + theme_bw()
+ggplot(data = d) + geom_histogram(aes(delay_mean))  + 
+  labs(title = "Histogram of average Daily Delay", x = "Avg daily delay") + 
+  theme_bw()
 
-ggplot(data = d,mapping = aes(delay_mean,c_mean)) + geom_point(alpha=0.2) + labs(y = "Propotion of cancelled flights", x = "Avg daily delay") + theme_bw()
-
-
+ggplot(data = d,mapping = aes(delay_mean,c_mean)) + 
+  geom_point(alpha=0.2) + 
+  labs(y = "Propotion of cancelled flights", x = "Avg daily delay") + 
+  theme_bw()
 ```
 
 
@@ -69,10 +72,13 @@ The carrier EV has the worst delays.
 
 ```{r}
 
-worst_carrier <- flights %>% group_by(carrier) %>% summarise( delay = sum(dep_delay + arr_delay, na.rm = TRUE))
+worst_carrier <- flights %>% group_by(carrier) %>% 
+  summarise( delay = sum(dep_delay + arr_delay, na.rm = TRUE))
 
 
-ggplot(data = worst_carrier, mapping = aes(x=carrier, y=delay)) + geom_col() + theme_bw()
+ggplot(data = worst_carrier, mapping = aes(x=carrier, y=delay)) + 
+  geom_col() + 
+  theme_bw()
 ```
 
 
@@ -89,7 +95,9 @@ i.e Lets assume we identify that DL/ATL with 10571 flights is a non-normal distr
 Quick research indicates that we should likely use the Q-Q plot, but i don't understand this enough to plot it for this assignment.
 
 ```{r}
-flights %>% group_by(carrier,dest) %>% summarise(c = n()) %>% arrange(desc(c))
+flights %>% group_by(carrier,dest) %>% 
+  summarise(c = n()) %>% 
+  arrange(desc(c))
 ```
 
 
