@@ -1,0 +1,195 @@
+---
+title: "COMPSCIX 415.2 Homework 8"
+author: "Vishnu Vardhan"
+date: "4/3/2018"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readr)
+```
+
+
+
+## Q1
+Load the train.csv dataset into R. How many observations and columns are there? 
+Convert the target variable to a factor because it will be loaded into R as an integer by default.
+
+### Answer
+
+```{r}
+d <- read_csv("train.csv")
+glimpse(d)
+
+d$Survived <- factor(d$Survived)
+```
+
+
+## Q2
+
+Our first step is to randomly split the data into train and test datasets. We will 
+use a 70/30 split, and use the random seed of 29283 so that we all should get the 
+same training and test set.
+
+### Answer
+
+```{r}
+library (caTools)
+
+set.seed(29283)
+sample = sample.split(d, SplitRatio = 0.7)
+train  = subset(d, sample == TRUE)
+test   = subset(d, sample == FALSE)
+```
+
+
+## Q3
+
+Our target is called Survived. First, fit a logistic regression model using Pclass, 
+Sex, Fare as your three features. Fit the model using the glm() function.
+Ask yourself these questions before fitting the model:
+• What kind of relationship will these features have with the probability of survival?
+• Are these good features, given the problem we are trying to solve?
+
+After fitting the model, output the coefficients using the broom package and answer these questions:
+• How would you interpret the coefficients?
+• Are the features significant?
+Use the code below and fill in the blanks.
+
+### Answer
+
+Having explored the data before, i would expect pClass to be strongly correlated to surival.
+The same applies for gender.
+
+Yes, these are good features, since this would either reflect a bias, or potential seating 
+situations that could affect survival.
+
+The estimates indicate that being "male", or being in a low "class" is strongly correlated to not surving.
+
+Apart from fare all the features are significant.
+
+```{r}
+library(broom)
+# Fit a model with intercept only
+mod_1 <- glm(Survived ~ Pclass + Sex + Fare, data = train, family = 'binomial')
+# take a look at the features and coefficients
+tidy(mod_1)
+```
+
+
+
+## Q4
+
+Now, let’s fit a model using a classification tree, using the same features and plot the final decision tree. Use the code below for help.
+Answer these questions:
+• Describe in words one path a Titanic passenger might take down the tree. (Hint: look at your tree,
+choose a path from the top to a terminal node, and describe the path like this - a male passenger who
+paid a fare > 30 and was in first class has a high probability of survival)
+• Does anything surprise you about the fitted tree?
+
+### Answer
+
+
+A female passenger in a class greater than 2.5 (essentially - class 3 ), and with fare >= 22.904 had a less than 20% chance of surviving.
+
+I was really surprised that fare played such a major part of the decision tree.
+
+```{r}
+library(rpart)
+library(partykit)
+tree_mod <- rpart(Survived ~ Pclass + Sex + Fare, data = train)
+plot(as.party(tree_mod), gp = gpar(fontsize = 6))
+```
+
+
+## Q5-A
+
+Evaluate both the logistic regression model and classification tree on the test_set. 
+First, use the predict() function to get the model predictions for the testing set. 
+Use the code below for help. 
+
+### Answer
+
+```{r}
+test_logit <- predict(mod_1, newdata = test, type = 'response')
+test_tree <- predict(tree_mod, newdata = test)[,2]
+```
+
+
+## Q5-B
+
+Next, we will plot the ROC curves from both models using the code below. 
+Don’t just copy and paste the code. Go through it line by line and see what it is doing. 
+Recall that predictions from your decision tree are given as a two column matrix.
+
+### Answer
+
+```{r}
+library(ROCR)
+
+perf_logit = performance ( 
+  prediction(predictions = test_logit, labels = test$Survived),
+  measure = "tpr",
+  x.measure = "fpr")
+
+perf_tree = performance ( 
+  prediction(predictions = test_tree, labels = test$Survived),
+  measure = "tpr",
+  x.measure = "fpr")
+
+roc_data <- bind_rows(
+  tibble(fpr = perf_logit@x.values[[1]],tpr = perf_logit@y.values[[1]], tree = "logit"),
+  tibble(fpr = perf_tree@x.values[[1]],tpr = perf_tree@y.values[[1]], tree = "tree")
+  )
+
+ggplot(data = roc_data, aes(fpr,tpr)) + geom_line(aes(colour = tree)) + theme_bw()
+
+```
+
+
+## Q5-C
+Now, use the performance() function to calculate the area under the curve (AUC) for both ROC curves.
+Check ?performance for help on plugging in the right measure argument.
+
+### Answer
+
+```{r}
+# calculate the AUC
+auc_logit <-  performance ( 
+  prediction(predictions = test_logit, labels = test$Survived), measure = "auc")
+auc_tree <-  performance ( 
+  prediction(predictions = test_tree, labels = test$Survived), measure = "auc")
+# extract the AUC value
+auc_logit@y.values[[1]]
+auc_tree@y.values[[1]]
+```
+
+
+## Q5-C
+Lastly, pick a probability cutoff by looking at the ROC curves. You pick, there’s no right answer (but
+there is a wrong answer - make sure to pick something between 0 and 1). Using that probability cutoff, create
+the confusion matrix for each model by following these steps:
+
+### Answer
+
+
+```{r}
+cut_off = 0.25
+
+test_set <- test
+
+test_set$predicted_logit <- test_logit
+test_set$predicted_tree  <- test_tree
+
+test_set %>% mutate(s = case_when(
+  predicted_logit > cut_off ~ "Yes", 
+  predicted_logit <= cut_off ~ "No")) %>%  count(s, Survived)  %>% spread(Survived, n)
+
+test_set %>% mutate(s = case_when(
+  predicted_tree > cut_off ~ "Yes", 
+  predicted_tree <= cut_off ~ "No")) %>%  count(s, Survived)  %>% spread(Survived, n)
+```
+
