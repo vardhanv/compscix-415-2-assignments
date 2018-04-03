@@ -8,21 +8,20 @@ output:
 ---
 
 
-```{r}
+```{r  setup, include=FALSE}
 library(tidyverse)
 library(dplyr)
 library(readr)
 ```
 
 
-
 ## Q1
 Load the train.csv dataset into R. How many observations and columns are there? 
 Convert the target variable to a factor because it will be loaded into R as an integer by default.
-
 ### Answer
 
 ```{r}
+
 d <- read_csv("train.csv")
 glimpse(d)
 

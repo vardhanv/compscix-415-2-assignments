@@ -126,29 +126,27 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#q1">Q1</a><ul>
+<li><a href="#q1">Q1</a></li>
+<li><a href="#q2">Q2</a><ul>
 <li><a href="#answer">Answer</a></li>
 </ul></li>
-<li><a href="#q2">Q2</a><ul>
+<li><a href="#q3">Q3</a><ul>
 <li><a href="#answer-1">Answer</a></li>
 </ul></li>
-<li><a href="#q3">Q3</a><ul>
+<li><a href="#q4">Q4</a><ul>
 <li><a href="#answer-2">Answer</a></li>
 </ul></li>
-<li><a href="#q4">Q4</a><ul>
+<li><a href="#q5-a">Q5-A</a><ul>
 <li><a href="#answer-3">Answer</a></li>
 </ul></li>
-<li><a href="#q5-a">Q5-A</a><ul>
+<li><a href="#q5-b">Q5-B</a><ul>
 <li><a href="#answer-4">Answer</a></li>
 </ul></li>
-<li><a href="#q5-b">Q5-B</a><ul>
+<li><a href="#q5-c">Q5-C</a><ul>
 <li><a href="#answer-5">Answer</a></li>
 </ul></li>
-<li><a href="#q5-c">Q5-C</a><ul>
-<li><a href="#answer-6">Answer</a></li>
-</ul></li>
 <li><a href="#q5-c-1">Q5-C</a><ul>
-<li><a href="#answer-7">Answer</a></li>
+<li><a href="#answer-6">Answer</a></li>
 </ul></li>
 </ul>
 </div>
@@ -166,9 +164,7 @@ $(document).ready(function () {
 library(readr)</code></pre>
 <div id="q1" class="section level2">
 <h2>Q1</h2>
-<p>Load the train.csv dataset into R. How many observations and columns are there? Convert the target variable to a factor because it will be loaded into R as an integer by default.</p>
-<div id="answer" class="section level3">
-<h3>Answer</h3>
+<p>Load the train.csv dataset into R. How many observations and columns are there? Convert the target variable to a factor because it will be loaded into R as an integer by default. ### Answer</p>
 <pre class="r"><code>d &lt;- read_csv(&quot;train.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
@@ -202,11 +198,10 @@ library(readr)</code></pre>
 ## $ Embarked    &lt;chr&gt; &quot;S&quot;, &quot;C&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;Q&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;C&quot;, ...</code></pre>
 <pre class="r"><code>d$Survived &lt;- factor(d$Survived)</code></pre>
 </div>
-</div>
 <div id="q2" class="section level2">
 <h2>Q2</h2>
 <p>Our first step is to randomly split the data into train and test datasets. We will use a 70/30 split, and use the random seed of 29283 so that we all should get the same training and test set.</p>
-<div id="answer-1" class="section level3">
+<div id="answer" class="section level3">
 <h3>Answer</h3>
 <pre class="r"><code>library (caTools)
 
@@ -220,7 +215,7 @@ test   = subset(d, sample == FALSE)</code></pre>
 <h2>Q3</h2>
 <p>Our target is called Survived. First, fit a logistic regression model using Pclass, Sex, Fare as your three features. Fit the model using the glm() function. Ask yourself these questions before fitting the model: • What kind of relationship will these features have with the probability of survival? • Are these good features, given the problem we are trying to solve?</p>
 <p>After fitting the model, output the coefficients using the broom package and answer these questions: • How would you interpret the coefficients? • Are the features significant? Use the code below and fill in the blanks.</p>
-<div id="answer-2" class="section level3">
+<div id="answer-1" class="section level3">
 <h3>Answer</h3>
 <p>Having explored the data before, i would expect pClass to be strongly correlated to surival. The same applies for gender.</p>
 <p>Yes, these are good features, since this would either reflect a bias, or potential seating situations that could affect survival.</p>
@@ -241,7 +236,7 @@ tidy(mod_1)</code></pre>
 <div id="q4" class="section level2">
 <h2>Q4</h2>
 <p>Now, let’s fit a model using a classification tree, using the same features and plot the final decision tree. Use the code below for help. Answer these questions: • Describe in words one path a Titanic passenger might take down the tree. (Hint: look at your tree, choose a path from the top to a terminal node, and describe the path like this - a male passenger who paid a fare &gt; 30 and was in first class has a high probability of survival) • Does anything surprise you about the fitted tree?</p>
-<div id="answer-3" class="section level3">
+<div id="answer-2" class="section level3">
 <h3>Answer</h3>
 <p>A female passenger in a class greater than 2.5 (essentially - class 3 ), and with fare &gt;= 22.904 had a less than 20% chance of surviving.</p>
 <p>I was really surprised that fare played such a major part of the decision tree.</p>
@@ -258,7 +253,7 @@ plot(as.party(tree_mod), gp = gpar(fontsize = 6))</code></pre>
 <div id="q5-a" class="section level2">
 <h2>Q5-A</h2>
 <p>Evaluate both the logistic regression model and classification tree on the test_set. First, use the predict() function to get the model predictions for the testing set. Use the code below for help.</p>
-<div id="answer-4" class="section level3">
+<div id="answer-3" class="section level3">
 <h3>Answer</h3>
 <pre class="r"><code>test_logit &lt;- predict(mod_1, newdata = test, type = 'response')
 test_tree &lt;- predict(tree_mod, newdata = test)[,2]</code></pre>
@@ -267,7 +262,7 @@ test_tree &lt;- predict(tree_mod, newdata = test)[,2]</code></pre>
 <div id="q5-b" class="section level2">
 <h2>Q5-B</h2>
 <p>Next, we will plot the ROC curves from both models using the code below. Don’t just copy and paste the code. Go through it line by line and see what it is doing. Recall that predictions from your decision tree are given as a two column matrix.</p>
-<div id="answer-5" class="section level3">
+<div id="answer-4" class="section level3">
 <h3>Answer</h3>
 <pre class="r"><code>library(ROCR)</code></pre>
 <pre><code>## Loading required package: gplots</code></pre>
@@ -298,7 +293,7 @@ ggplot(data = roc_data, aes(fpr,tpr)) + geom_line(aes(colour = tree)) + theme_bw
 <div id="q5-c" class="section level2">
 <h2>Q5-C</h2>
 <p>Now, use the performance() function to calculate the area under the curve (AUC) for both ROC curves. Check ?performance for help on plugging in the right measure argument.</p>
-<div id="answer-6" class="section level3">
+<div id="answer-5" class="section level3">
 <h3>Answer</h3>
 <pre class="r"><code># calculate the AUC
 auc_logit &lt;-  performance ( 
@@ -315,31 +310,8 @@ auc_logit@y.values[[1]]</code></pre>
 <div id="q5-c-1" class="section level2">
 <h2>Q5-C</h2>
 <p>Lastly, pick a probability cutoff by looking at the ROC curves. You pick, there’s no right answer (but there is a wrong answer - make sure to pick something between 0 and 1). Using that probability cutoff, create the confusion matrix for each model by following these steps:</p>
-<div id="answer-7" class="section level3">
+<div id="answer-6" class="section level3">
 <h3>Answer</h3>
-<pre class="r"><code>cut_off = 0.25
-
-test_set &lt;- test
-
-test_set$predicted_logit &lt;- test_logit
-test_set$predicted_tree  &lt;- test_tree
-
-test_set %&gt;% mutate(s = case_when(
-  predicted_logit &gt; cut_off ~ &quot;Yes&quot;, 
-  predicted_logit &lt;= cut_off ~ &quot;No&quot;)) %&gt;%  count(s, Survived)  %&gt;% spread(Survived, n)</code></pre>
-<pre><code>## # A tibble: 2 x 3
-##       s   `0`   `1`
-## * &lt;chr&gt; &lt;int&gt; &lt;int&gt;
-## 1    No   124    20
-## 2   Yes    48   104</code></pre>
-<pre class="r"><code>test_set %&gt;% mutate(s = case_when(
-  predicted_tree &gt; cut_off ~ &quot;Yes&quot;, 
-  predicted_tree &lt;= cut_off ~ &quot;No&quot;)) %&gt;%  count(s, Survived)  %&gt;% spread(Survived, n)</code></pre>
-<pre><code>## # A tibble: 2 x 3
-##       s   `0`   `1`
-## * &lt;chr&gt; &lt;int&gt; &lt;int&gt;
-## 1    No   155    38
-## 2   Yes    17    86</code></pre>
 </div>
 </div>
 
